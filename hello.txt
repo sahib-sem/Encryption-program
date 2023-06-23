@@ -1,0 +1,7 @@
+let's test this encryption system very well
+okay I will have a message written in clear text here is it
+
+I am adding the space just to find bugs silly me
+
+hope it works !!
+
