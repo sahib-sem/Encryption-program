@@ -14,6 +14,7 @@ class Affine:
             return self.getKey()
     
     def choose_key(self): # write key to a file
+        
         try:
             primary,secondary = self.getKey()
             with open('affine_key.txt' , 'w') as file:
@@ -21,8 +22,12 @@ class Affine:
                 file.write(str(secondary))
             file.close()
         except:
+           
             print("error occured while writing to file")
-            return None
+            return True
+
+       
+
 
 
 
@@ -35,8 +40,9 @@ class Affine:
                 secondary = int(file.readline())
             file.close()
         except FileNotFoundError:
+            
             print("key file not found")
-            return None
+            return True
                 
 
         cipher_text_path = message_path.split('.')[0] + '_affine_cipher.txt'   
@@ -46,8 +52,9 @@ class Affine:
                 message = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("message file not found")
-            return None
+            return True
 
         cipher_text = ""
         for x in message:
@@ -56,19 +63,33 @@ class Affine:
 
             value2 = value1 % 128
             cipher_text = cipher_text + chr(value2)
-       
-        with open(cipher_text_path , 'w') as file:
-            file.write(cipher_text)
-        file.close()
+        try:
+            with open(cipher_text_path , 'w') as file:
+                file.write(cipher_text)
+            file.close()
+        except:
+            
+            print("error occured while writing to file")
+            return True
+
+        
+        
         
         
 
     # This is the decrypt method where a cipher_text is decrypted
     def decrypt(self, cipher_text_path, key_file = 'affine_key.txt'):
-
-        with open(key_file , 'r') as file:
-            primary = int(file.readline())
-            secondary = int(file.readline())
+        
+        
+        try:
+            with open(key_file , 'r') as file:
+                primary = int(file.readline())
+                secondary = int(file.readline())
+            file.close()
+        except FileNotFoundError:
+            
+            print("key file not found")
+            return True
         
         message = ""
         try:
@@ -76,8 +97,9 @@ class Affine:
                 cipher_text = file.read()
             file.close()
         except FileNotFoundError:
+               
             print("cipher text file not found")
-            return None
+            return True
         
         message_path = cipher_text_path.split('_')[0] + '_affine_message.txt'
 
@@ -93,8 +115,10 @@ class Affine:
                 file.write(message)
             file.close()
         except:
+           
             print("error occured while writing to file")
-            return None
+            return True
+
 
     def gcd(self, y, x = 128):  # This method is used to calculate the gcd of 128 and the primary key
 
@@ -118,14 +142,18 @@ class Transposition:
     def choose_key(self, message_length):
         m = self.choose_m(message_length)
         mapping = self.sigma_function(m)
+       
         try:
             with open('transposition_key.txt' , 'w') as file:
                 for key, value in mapping.items():
                     file.write(str(key) + ' ' + str(value) + '\n')
             file.close()
         except:
+            
             print("error occured while writing to file")
-            return None
+            return True
+
+        
 
     def choose_m(self, message_length):
         if message_length > 100:
@@ -204,6 +232,7 @@ class Transposition:
     
     def encrypt(self , message_path , key_file = 'transposition_key.txt'):
 
+        
         try:
             with open(key_file , 'r') as file:
                 mapping = {}
@@ -212,16 +241,18 @@ class Transposition:
                     mapping[int(key)] = int(value)
             file.close()
         except FileNotFoundError:
+            
             print("key file not found")
-            return None
+            return True
 
         try:
             with open(message_path , 'r') as file:
                 message = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("message file not found")
-            return None
+            return True
 
         m = len(mapping) #get the m value from the mapping function
 
@@ -239,8 +270,9 @@ class Transposition:
                 file.write(cipher_text)
             file.close()
         except:
+            
             print("error occured while writing to file")
-            return None
+            return True
 
 
         
@@ -250,6 +282,8 @@ class Transposition:
     #given cipher_text and and a mapping function used to encrypt the message
     #return the original value
     def decrypt(self , cipher_text_path , key_file = 'transposition_key.txt'):
+
+       
         try:
             with open(key_file , 'r') as file:
                 mapping = {}
@@ -258,16 +292,18 @@ class Transposition:
                     mapping[int(key)] = int(value)
             file.close()
         except FileNotFoundError:
+            
             print("key file not found")
-            return None
+            return True
 
         try:
             with open(cipher_text_path , 'r') as file:
                 cipher_text = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("cipher text file not found")
-            return None
+            return True
         
         m = len(mapping) #get the m value from the mapping function
         inverse_mapping = self.inverse_sigma(mapping) #find the inverse mapping of the mapping function used to encrypt the message
@@ -287,8 +323,11 @@ class Transposition:
                 file.write(message)
             file.close()
         except:
+            
             print("error occured while writing to file")
-            return None
+            return True
+
+        
 
 #******************************************************************************************************************************************************
 
@@ -296,6 +335,7 @@ class Transposition:
 class RSA:
     
     def choose_key(self):
+        
         try:
             p = self.Prime_generator()
             q = self.Prime_generator()
@@ -313,8 +353,11 @@ class RSA:
                 file.write(str(d))
             file.close()
         except:
+            
             print("error occured while writing to file")
-            return None
+            return True
+
+        
             
 
     def gcd(self, y, x):  # find the gcd of two numbers
@@ -392,22 +435,25 @@ class RSA:
     # e is relatively prime with the product (p-1)*(q-1)
     def encrypt(self, message_path, key_file = 'public_rsa_key.txt'):
 
+        
         try:
             with open(key_file , 'r') as file:
                 N = int(file.readline())
                 e = int(file.readline())
             file.close()
         except FileNotFoundError:
+            
             print("key file not found")
-            return None
+            return True
 
         try:
             with open(message_path , 'r') as file:
                 message = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("message file not found")
-            return None
+            return True
         
         chunk = self.chunks(message)
 
@@ -424,8 +470,11 @@ class RSA:
                 file.write(cipher_text)
             file.close()
         except:
+            
             print("error occured while writing to file")
-            return None
+            return True
+
+        
         
 
     def inverse_mode(self, e, product):  # This method is used to find the inverse of e mod (p-1)*(q-1)
@@ -439,22 +488,25 @@ class RSA:
     # returns the decrypted message as a string
 
     def decrypt(self, cipher_text_path, key_file = 'private_rsa_key.txt'):
+        
         try:
             with open(key_file , 'r') as file:
                 N = int(file.readline())
                 d = int(file.readline())
             file.close()
         except FileNotFoundError:
+            
             print("key file not found")
-            return None
+            return True
 
         try:
             with open(cipher_text_path , 'r') as file:
                 cipher_text = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("cipher text file not found")
-            return None
+            return True
         
         cipher_text = cipher_text.strip().split(" ")
 
@@ -476,8 +528,10 @@ class RSA:
                 file.write(message)
             file.close()
         except:
+            
             print("error occured while writing to file")
-            return None
+            return True
+        
     #return original message from the decrypted cipher
     def Tostring(self, sequence):
         res=""
@@ -488,22 +542,25 @@ class RSA:
     
     def sign(self,message_path,key_file = 'private_rsa_key.txt'):
 
+        
         try:
             with open(key_file , 'r') as file:
                 N = int(file.readline())
                 d = int(file.readline())
             file.close()
         except FileNotFoundError:
+            
             print("key file not found")
-            return None
+            return True
         
         try:
             with open(message_path , 'r') as file:
                 message = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("message file not found")
-            return None
+            return True
 
         
         chunk = self.chunks(message)
@@ -520,35 +577,42 @@ class RSA:
                 file.write(signature)
             file.close()
         except:
+            
             print("error occured while writing to file")
-            return None
+            return True
+        
+        
     
     def verify(self,message_path ,signature_path,key_file = 'public_rsa_key.txt'):
 
+        
         try:
             with open(key_file , 'r') as file:
                 N = int(file.readline())
                 e = int(file.readline())
             file.close()
         except FileNotFoundError:
+            
             print("key file not found")
-            return None
+            return True
 
         try:
             with open(message_path , 'r') as file:
                 message = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("message file not found")
-            return None
+            return True
 
         try:
             with open(signature_path , 'r') as file:
                 signature = file.read()
             file.close()
         except FileNotFoundError:
+            
             print("signature file not found")
-            return None
+            return True
 
         
         chunk = self.chunks(message)
@@ -604,16 +668,16 @@ def main():
                         if choice == 'y':
                             affine.choose_key()
                         
-                            affine.encrypt(message_path)
-                            print('your encrypted message is in the file ending with _affine_cipher.txt')
+                            if not affine.encrypt(message_path):
+                                print('your encrypted message is in the file ending with _affine_cipher.txt')
                             
                             
                         elif choice == 'n':
                             print('enter the path of the key file')
                             key_file = input('key_file: ')
                             
-                            affine.encrypt(message_path,key_file)
-                            print('your encrypted message is in the file ending with _affine_cipher.txt')
+                            if not affine.encrypt(message_path,key_file):
+                                print('your encrypted message is in the file ending with _affine_cipher.txt')
                            
                         else:
                             print('invalid input')
@@ -627,8 +691,8 @@ def main():
                         cipher_text_path = input('cipher_text_path: ')
                         
                        
-                        affine.decrypt(cipher_text_path,key_file)
-                        print('your decrypted message is in the file ending with _affine_message.txt')
+                        if not affine.decrypt(cipher_text_path,key_file):
+                            print('your decrypted message is in the file ending with _affine_message.txt')
                         
                         
                     elif option==3:
@@ -658,13 +722,15 @@ def main():
                                 file.close()
                             except FileNotFoundError:
                                 print("message file not found")
-                                return None
+                                break
+                                
+                                
                             
                             m = len(message)
                             transpose.choose_key(m)
                     
-                            transpose.encrypt(message_path)
-                            print('your encrypted message is in the file ending with _transposition_cipher.txt')
+                            if not transpose.encrypt(message_path):
+                                print('your encrypted message is in the file ending with _transposition_cipher.txt')
                            
                         elif chioce == 'n':
 
@@ -672,8 +738,8 @@ def main():
                             key_file = input('key_file: ')
                             transpose = Transposition()
                          
-                            transpose.encrypt(message_path,key_file)
-                            print('your encrypted message is in the file ending with _transposition_cipher.txt')
+                            if not transpose.encrypt(message_path,key_file):
+                                print('your encrypted message is in the file ending with _transposition_cipher.txt')
                             
                         else:
                             print('invalid input')
@@ -685,8 +751,8 @@ def main():
                         print('enter the path of the cipher text file')
                         cipher_text_path = input('cipher_text_path: ')
                         
-                        transpose.decrypt(cipher_text_path,key_file)
-                        print('your decrypted message is in the file ending with _transposition_message.txt')
+                        if not transpose.decrypt(cipher_text_path,key_file):
+                            print('your decrypted message is in the file ending with _transposition_message.txt')
                         
                     elif option==3:
                         break
@@ -712,16 +778,16 @@ def main():
                         if choice == 'y':
                             rsa.choose_key()
                         
-                            rsa.encrypt(message_path)
-                            print('your encrypted message is in the file ending with _rsa_cipher.txt')
+                            if not rsa.encrypt(message_path):
+                                print('your encrypted message is in the file ending with _rsa_cipher.txt')
                             
                             
                         elif choice == 'n':
                             print('enter the path of your public key file')
                             key_file = input('public key_file path: ')
                             
-                            rsa.encrypt(message_path,key_file)
-                            print('your encrypted message is in the file ending with _rsa_cipher.txt')
+                            if not rsa.encrypt(message_path,key_file):
+                                print('your encrypted message is in the file ending with _rsa_cipher.txt')
                            
                         else:
                             print('invalid input')
@@ -733,8 +799,8 @@ def main():
                         cipher_text_path = input('cipher_text_path: ')
                         
                        
-                        rsa.decrypt(cipher_text_path,key_file)
-                        print('your decrypted message is in the file ending with _rsa_message.txt')
+                        if not rsa.decrypt(cipher_text_path,key_file):
+                            print('your decrypted message is in the file ending with _rsa_message.txt')
                        
                     elif option==3:
                         print('enter the path of the message file')
@@ -742,8 +808,8 @@ def main():
                         rsa = RSA()
                         print('enter the path of your private key file')
                         key_file = input('private key_file path: ')
-                        rsa.sign(message_path,key_file)
-                        print('your signature is in the file ending with _rsa_signature.txt')
+                        if not rsa.sign(message_path,key_file):
+                            print('your signature is in the file ending with _rsa_signature.txt')
                     
                     elif option==4:
                         print('enter the path of the message file')
@@ -753,6 +819,7 @@ def main():
                         rsa = RSA()
                         print('enter the path of your public key file')
                         key_file = input('public key_file path: ')
+                        
                         if rsa.verify(message_path,signature_path,key_file):
                             print('**************signature is valid*************')
                         else:
@@ -769,28 +836,3 @@ def main():
                 print("cryptosystem not avialable")
 main()
 
-
-# tr = Transposition(8)
-# cipher = tr.encrypt("hello world is going to be the motto of programmers")
-# print(cipher, 'cipher text')
-# print(tr.decrypt(cipher) , 'decrypted text')
-
-
-# rsa = RSA()
-# cipher = rsa.encrypt("hello world is going to be the motto of programmers")
-# print(cipher, 'cipher text')
-# print(rsa.decrypt(cipher) , 'decrypted text')
-
-# af = Affine()
-# af.choose_key()
-# af.encrypt('hello.txt')
-# af.decrypt('hello_cipher.txt')
-
-# tr = Transposition()
-# tr.choose_key(100)
-# tr.encrypt('hello.txt')
-# tr.decrypt('hello_transposition_cipher.txt')
-
-# rsa = RSA()
-# rsa.choose_key()
-# rsa.sign('hello.txt')
